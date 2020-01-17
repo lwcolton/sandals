@@ -10,7 +10,6 @@ from pymongo_mapreduce.web import handle_exception, LoggerMiddleware
 
 
 current_directory = os.path.dirname(os.path.abspath(__file__))
-ui_directory = os.path.abspath(os.path.join(current_directory, "../../ui"))
 
 def get_files(root_path):
     files = {}
@@ -40,20 +39,18 @@ def get_components_js(map_name, path):
     return js
 
 def load_framework_js():
-    with open(os.path.join(ui_directory, "framework.js")) as app_file_obj:
+    with open(os.path.join(current_directory, "sandals.js")) as app_file_obj:
         framework_js = app_file_obj.read()
     return framework_js
 
-def load_index_js(relative_app_path):
-    app_dir = os.path.join(ui_directory, relative_app_path)
+def load_index_js(app_dir):
     with open(os.path.join(app_dir, "index.js")) as app_file_obj:
         app_js = app_file_obj.read()
     app_js += "\n" + get_components_js("pages", os.path.join(app_dir, "pages")) + "\n"
     app_js += get_components_js("components", os.path.join(app_dir, "components"))
     return app_js
 
-def load_index_html(relative_app_path):
-    app_dir = os.path.join(ui_directory, relative_app_path)
+def load_index_html(app_dir):
     with open(os.path.join(app_dir, "index.html")) as file_obj:
         index_html = file_obj.read()
     return index_html
@@ -61,38 +58,31 @@ def load_index_html(relative_app_path):
 class FrameworkJSResource:
     def __init__(self):
         self.framework_js = load_framework_js()
-        reload = os.environ.get("RELOAD_UI")
-        if reload == "true":
-            self.reload = True
-        else:
-            self.reload = False
 
     def on_get(self, req, resp):
-        if self.reload:
-            self.framework_js = load_framework_js()
         resp.body = self.framework_js
         resp.content_type = falcon.MEDIA_JS
 
 class IndexJSResource:
-    def __init__(self, relative_app_path, reload_disk=False):
-        self.relative_app_path = relative_app_path
-        self.index_js = load_index_js(relative_app_path)
+    def __init__(self, app_path, reload_disk=False):
+        self.app_path = app_path
+        self.index_js = load_index_js(self.app_path)
         self.reload_disk = reload_disk
 
     def on_get(self, req, resp):
         if self.reload_disk:
-            self.index_js = load_index_js(self.relative_app_path)
+            self.index_js = load_index_js(self.app_path)
         resp.body = self.index_js
         resp.content_type = falcon.MEDIA_JS
 
 class IndexHTMLResource:
-    def __init__(self, relative_app_path, reload_disk=False):
-        self.relative_app_path = relative_app_path
-        self.index_html = load_index_html(self.relative_app_path)
+    def __init__(self, app_path, reload_disk=False):
+        self.app_path = app_path
+        self.index_html = load_index_html(self.app_path)
         self.reload_disk = reload_disk
 
     def on_get(self, req, resp):
         if self.reload_disk:
-            self.index_html = load_index_html(self.relative_app_path)
+            self.index_html = load_index_html(self.app_path)
         resp.body = self.index_html
         resp.content_type = falcon.MEDIA_HTML
