@@ -4,10 +4,6 @@ import pathlib
 
 import falcon
 
-from pymongo_mapreduce.ui.auth import GoogleOauthRedirectResource, GoogleOauthReturnResource
-from pymongo_mapreduce.config import get_config
-from pymongo_mapreduce.web import handle_exception, LoggerMiddleware
-
 
 current_directory = os.path.dirname(os.path.abspath(__file__))
 
