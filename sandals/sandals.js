@@ -70,6 +70,7 @@ function showPage(pageName, options){
     if(setQueryParams == undefined){
         setQueryParams = {};
     }
+    pageState.queryParams = setQueryParams;
     pageUrl += "?";
     var params = $.param(setQueryParams);
     if(params) {
@@ -77,7 +78,6 @@ function showPage(pageName, options){
     }
     pageUrl += "#" + pageName;
     if(pushHistory){
-        pageState.queryParams = setQueryParams;
         window.history.pushState(setQueryParams, pageName, pageUrl);
     }
 
@@ -91,6 +91,7 @@ function showPage(pageName, options){
         }
     }
     preparePage().then(function(){
+        window.scrollTo(0,0);
         if(headerComponentName){
             showComponent(headerComponentName, headerContainer);
         }
