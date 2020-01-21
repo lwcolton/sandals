@@ -51,8 +51,11 @@ function _loadWindow(){
         location.hash = frameworkSettings.homepageHash;
     }
     var pageName = location.hash.substr(1);
-    pageState.queryParams = getJsonFromUrl(location.search);
-    showPage(pageName, {pushHistory: false});
+    var options = {
+        pushHistory: false,
+        setQueryParams: getJsonFromUrl(location.search)
+    }
+    showPage(pageName, options);
 }
 
 function showPage(pageName, options){
