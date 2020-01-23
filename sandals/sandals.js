@@ -94,7 +94,6 @@ function showPage(pageName, options){
         }
     }
     preparePage().then(function(){
-        window.scrollTo(0,0);
         if(headerComponentName){
             showComponent(headerComponentName, headerContainer);
         }
@@ -112,6 +111,7 @@ function _showPage(pageName, componentState) {
     } else {
         showComponent(page, bodyContainer, componentState);
     }
+    window.scrollTo(0,0);
 }
 
 function generateId(){
